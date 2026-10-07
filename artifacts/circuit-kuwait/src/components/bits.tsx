@@ -21,7 +21,7 @@ export function Logo({ light = false }: { light?: boolean }) {
 
 export function Reveal({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const { ref, seen } = useScrollReveal<HTMLDivElement>();
-  return <div ref={ref} style={{ transitionDelay: `${delay}ms` }} className={cn('reveal', seen && 'in', className)}>{children}</div>;
+  return <div ref={ref} style={{ transitionDelay: `${Math.min(Math.max(delay, 0), 160)}ms` }} className={cn('reveal', seen && 'in', className)}>{children}</div>;
 }
 
 export function Stars({ value, count, size = 14 }: { value: number; count?: number; size?: number }) {

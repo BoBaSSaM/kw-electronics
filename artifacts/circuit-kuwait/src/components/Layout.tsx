@@ -15,7 +15,7 @@ export function Layout({ children }: { children: ReactNode }) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !content.current?.animate) return;
     const animation = content.current.animate(
       [{ opacity: 0 }, { opacity: 1 }],
-      { duration: 380, easing: 'cubic-bezier(.22,1,.36,1)' },
+      { duration: 460, easing: 'cubic-bezier(.25,.1,.25,1)' },
     );
     return () => animation.cancel();
   }, [loc]);

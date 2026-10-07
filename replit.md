@@ -46,6 +46,7 @@ Product browsing/search/filtering, specifications and datasheets, comparison, wi
 - Original branding rather than copying RTC Electronics Kuwait.
 - English and Arabic with RTL; Kuwait governorates and delivery fields.
 - Requested blue/yellow palette: #0B3D91, #146CFF, #FFB703, background #F7F9FC.
+- Animations should feel smooth and balanced, not too fast or too slow.
 
 ## Gotchas
 

@@ -20,7 +20,7 @@ export function useScrollReveal<T extends HTMLElement>() {
     }
     observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) show();
-    }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+    }, { threshold: 0.06, rootMargin: '0px 0px 24px 0px' });
     observer.observe(element);
     preference.addEventListener('change', onPreferenceChange);
     return () => {
