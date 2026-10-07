@@ -1,36 +1,619 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: Circuit Kuwait electronics store API
 servers:
   - url: /api
-    description: Base API path
-tags:
-  - name: health
-    description: Health operations
 paths:
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UploadInput" }
+      responses:
+        "200":
+          description: Admin product image upload
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UploadResult" }
   /healthz:
     get:
       operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/HealthStatus"
+              schema: { $ref: "#/components/schemas/HealthStatus" }
+  /products:
+    get:
+      operationId: listProducts
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: category, in: query, schema: { type: string } }
+        - { name: brand, in: query, schema: { type: string } }
+        - { name: sort, in: query, schema: { type: string } }
+        - { name: available, in: query, schema: { type: boolean } }
+        - { name: minPrice, in: query, schema: { type: number } }
+        - { name: maxPrice, in: query, schema: { type: number } }
+        - { name: rating, in: query, schema: { type: number } }
+        - { name: featured, in: query, schema: { type: boolean } }
+        - { name: offers, in: query, schema: { type: boolean } }
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: limit, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: Products
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductPage" }
+  /products/{slug}:
+    parameters:
+      - { name: slug, in: path, required: true, schema: { type: string } }
+    get:
+      operationId: getProduct
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+  /categories:
+    get:
+      operationId: listCategories
+      responses:
+        "200":
+          description: Categories
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Category" } }
+  /brands:
+    get:
+      operationId: listBrands
+      responses:
+        "200":
+          description: Brands
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Brand" } }
+  /cart:
+    get:
+      operationId: getCart
+      responses:
+        "200":
+          description: Cart
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Cart" }
+    put:
+      operationId: updateCart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CartInput" }
+      responses:
+        "200":
+          description: Updated cart
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Cart" }
+  /wishlist:
+    get:
+      operationId: getWishlist
+      responses:
+        "200":
+          description: Wishlist
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Product" } }
+    put:
+      operationId: updateWishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/WishlistInput" }
+      responses:
+        "200":
+          description: Updated wishlist
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Product" } }
+  /account:
+    get:
+      operationId: getAccount
+      responses:
+        "200":
+          description: Customer account
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Account" }
+  /addresses:
+    get:
+      operationId: listAddresses
+      responses:
+        "200":
+          description: Saved addresses
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Address" } }
+    post:
+      operationId: saveAddress
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AddressInput" }
+      responses:
+        "201":
+          description: Address saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Address" }
+  /addresses/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    delete:
+      operationId: deleteAddress
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+  /orders:
+    get:
+      operationId: listOrders
+      responses:
+        "200":
+          description: My orders
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Order" } }
+    post:
+      operationId: placeOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OrderInput" }
+      responses:
+        "201":
+          description: Demo order placed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Order" }
+  /orders/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    get:
+      operationId: getOrder
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Order" }
+  /reviews/{productId}:
+    parameters:
+      - { name: productId, in: path, required: true, schema: { type: integer } }
+    get:
+      operationId: listReviews
+      responses:
+        "200":
+          description: Product reviews
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Review" } }
+    post:
+      operationId: addReview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReviewInput" }
+      responses:
+        "201":
+          description: Review added
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Review" }
+  /newsletter:
+    post:
+      operationId: subscribeNewsletter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EmailInput" }
+      responses:
+        "200":
+          description: Subscribed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+  /contact:
+    post:
+      operationId: sendContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContactInput" }
+      responses:
+        "200":
+          description: Message received
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+  /admin/summary:
+    get:
+      operationId: getAdminSummary
+      responses:
+        "200":
+          description: Store statistics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminSummary" }
+  /admin/products:
+    post:
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductInput" }
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+  /admin/products/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    put:
+      operationId: updateProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductInput" }
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Product" }
+    delete:
+      operationId: deleteProduct
+      responses:
+        "200":
+          description: Product deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+  /admin/orders:
+    get:
+      operationId: listAdminOrders
+      responses:
+        "200":
+          description: All orders
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Order" } }
+  /admin/orders/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: integer } }
+    patch:
+      operationId: updateOrderStatus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StatusInput" }
+      responses:
+        "200":
+          description: Order updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Order" }
+  /admin/customers:
+    get:
+      operationId: listCustomers
+      responses:
+        "200":
+          description: Customers
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Account" } }
+  /admin/taxonomy:
+    post:
+      operationId: saveTaxonomy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TaxonomyInput" }
+      responses:
+        "200":
+          description: Category or brand saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+  /admin/discounts:
+    get:
+      operationId: listDiscounts
+      responses:
+        "200":
+          description: Discounts
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: "#/components/schemas/Discount" } }
+    post:
+      operationId: saveDiscount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DiscountInput" }
+      responses:
+        "200":
+          description: Discount saved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Discount" }
 components:
   schemas:
+    UploadInput:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string, minLength: 1 }
+        size: { type: integer, minimum: 1, maximum: 5242880 }
+        contentType: { type: string, enum: [image/png, image/jpeg, image/webp] }
+    UploadResult:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string }
+        objectPath: { type: string }
     HealthStatus:
       type: object
+      required: [status]
+      properties: { status: { type: string } }
+    Message:
+      type: object
+      required: [message]
+      properties: { message: { type: string } }
+    Product:
+      type: object
+      required: [id, slug, name, nameAr, brand, category, subcategory, sku, price, stock, rating, reviewCount, image, images, description, specifications, featured, isNew, soldCount]
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        id: { type: integer }
+        slug: { type: string }
+        name: { type: string }
+        nameAr: { type: string }
+        brand: { type: string }
+        category: { type: string }
+        subcategory: { type: string }
+        sku: { type: string }
+        price: { type: number }
+        oldPrice: { type: ["number", "null"] }
+        stock: { type: integer }
+        rating: { type: number }
+        reviewCount: { type: integer }
+        image: { type: string }
+        images: { type: array, items: { type: string } }
+        description: { type: string }
+        specifications: { type: object, additionalProperties: { type: string } }
+        datasheet: { type: string }
+        featured: { type: boolean }
+        isNew: { type: boolean }
+        soldCount: { type: integer }
+    ProductInput:
+      type: object
+      required: [name, brand, category, sku, price, stock, image]
+      properties:
+        name: { type: string, minLength: 1 }
+        nameAr: { type: string }
+        brand: { type: string, minLength: 1 }
+        category: { type: string, minLength: 1 }
+        subcategory: { type: string }
+        sku: { type: string, minLength: 1 }
+        price: { type: number, minimum: 0 }
+        oldPrice: { type: ["number", "null"] }
+        stock: { type: integer, minimum: 0 }
+        image: { type: string }
+        images: { type: array, items: { type: string } }
+        description: { type: string }
+        specifications: { type: object, additionalProperties: { type: string } }
+        datasheet: { type: string }
+        featured: { type: boolean }
+        isNew: { type: boolean }
+    ProductPage:
+      type: object
+      required: [products, total, page, pages]
+      properties:
+        products: { type: array, items: { $ref: "#/components/schemas/Product" } }
+        total: { type: integer }
+        page: { type: integer }
+        pages: { type: integer }
+    Category:
+      type: object
+      required: [id, name, nameAr, slug, icon, children, count]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        nameAr: { type: string }
+        slug: { type: string }
+        icon: { type: string }
+        children: { type: array, items: { type: string } }
+        count: { type: integer }
+    Brand:
+      type: object
+      required: [id, name, count]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        count: { type: integer }
+    CartLineInput:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId: { type: integer }
+        quantity: { type: integer, minimum: 1, maximum: 100 }
+    CartInput:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/CartLineInput" } }
+        coupon: { type: string }
+    CartLine:
+      type: object
+      required: [product, quantity]
+      properties:
+        product: { $ref: "#/components/schemas/Product" }
+        quantity: { type: integer }
+    Cart:
+      type: object
+      required: [items, subtotal, delivery, discount, total, coupon]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/CartLine" } }
+        subtotal: { type: number }
+        delivery: { type: number }
+        discount: { type: number }
+        total: { type: number }
+        coupon: { type: string }
+    WishlistInput:
+      type: object
+      required: [productIds]
+      properties:
+        productIds: { type: array, items: { type: integer } }
+    AddressInput:
+      type: object
+      required: [governorate, area, block, street, building]
+      properties:
+        label: { type: string }
+        governorate: { type: string, enum: [Al Asimah, Hawalli, Farwaniya, Mubarak Al-Kabeer, Ahmadi, Jahra] }
+        area: { type: string, minLength: 1 }
+        block: { type: string, minLength: 1 }
+        street: { type: string, minLength: 1 }
+        avenue: { type: string }
+        building: { type: string, minLength: 1 }
+        floor: { type: string }
+        apartment: { type: string }
+        instructions: { type: string }
+    Address:
+      allOf:
+        - { $ref: "#/components/schemas/AddressInput" }
+        - type: object
+          required: [id]
+          properties: { id: { type: integer } }
+    Account:
+      type: object
+      required: [id, name, email, role, orderCount]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [customer, admin] }
+        orderCount: { type: integer }
+    OrderInput:
+      type: object
+      required: [name, email, phone, address, deliveryMethod, paymentMethod]
+      properties:
+        name: { type: string, minLength: 2 }
+        email: { type: string, format: email }
+        phone: { type: string, pattern: "^\\+?[0-9 ]{8,15}$" }
+        address: { $ref: "#/components/schemas/AddressInput" }
+        deliveryMethod: { type: string, enum: [standard, express, pickup] }
+        paymentMethod: { type: string, enum: [KNET, Visa, Mastercard, Apple Pay, Cash on Delivery] }
+    Order:
+      type: object
+      required: [id, number, name, email, phone, address, deliveryMethod, paymentMethod, status, items, subtotal, delivery, discount, total, createdAt, simulated]
+      properties:
+        id: { type: integer }
+        number: { type: string }
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        address: { $ref: "#/components/schemas/AddressInput" }
+        deliveryMethod: { type: string }
+        paymentMethod: { type: string }
+        status: { type: string }
+        items: { type: array, items: { $ref: "#/components/schemas/CartLine" } }
+        subtotal: { type: number }
+        delivery: { type: number }
+        discount: { type: number }
+        total: { type: number }
+        createdAt: { type: string }
+        simulated: { type: boolean }
+    ReviewInput:
+      type: object
+      required: [rating, text]
+      properties:
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        text: { type: string, minLength: 3, maxLength: 2000 }
+    Review:
+      type: object
+      required: [id, name, rating, text, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        rating: { type: integer }
+        text: { type: string }
+        createdAt: { type: string }
+    EmailInput:
+      type: object
+      required: [email]
+      properties: { email: { type: string, format: email } }
+    ContactInput:
+      type: object
+      required: [name, email, message]
+      properties:
+        name: { type: string, minLength: 2 }
+        email: { type: string, format: email }
+        message: { type: string, minLength: 5 }
+    StatusInput:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string, enum: [Pending, Processing, Shipped, Delivered, Cancelled] }
+    AdminSummary:
+      type: object
+      required: [totalSales, orders, customers, products, lowStock]
+      properties:
+        totalSales: { type: number }
+        orders: { type: integer }
+        customers: { type: integer }
+        products: { type: integer }
+        lowStock: { type: array, items: { $ref: "#/components/schemas/Product" } }
+    TaxonomyInput:
+      type: object
+      required: [kind, name]
+      properties:
+        kind: { type: string, enum: [category, brand] }
+        id: { type: integer }
+        name: { type: string, minLength: 1 }
+        nameAr: { type: string }
+        children: { type: array, items: { type: string } }
+        remove: { type: boolean }
+    DiscountInput:
+      type: object
+      required: [code, percent, active]
+      properties:
+        code: { type: string, minLength: 2 }
+        percent: { type: integer, minimum: 1, maximum: 90 }
+        active: { type: boolean }
+    Discount:
+      allOf:
+        - { $ref: "#/components/schemas/DiscountInput" }
+        - type: object
+          required: [id]
+          properties: { id: { type: integer } }

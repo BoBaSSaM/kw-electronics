@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Circuit Kuwait"
+description = "A bilingual Kuwait electronics component store with product catalog, cart, wishlist, checkout and store management."
+version = "1.0.0"
+id = "artifacts/circuit-kuwait"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24195
+
+[services.development]
+run = "pnpm --filter @workspace/circuit-kuwait run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/circuit-kuwait", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/circuit-kuwait/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24195"
+BASE_PATH = "/"

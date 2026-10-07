@@ -1,10 +1,11 @@
-# [Project name]
+# Circuit Kuwait
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An original bilingual Kuwait electronics and hardware components storefront for students, engineers, technicians, makers and companies.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/circuit-kuwait run dev` — storefront, using its managed workflow
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -22,23 +23,35 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/circuit-kuwait/` — React storefront and customer/admin pages
+- `artifacts/api-server/src/routes/` — catalog, customer, orders, admin and image storage API
+- `lib/api-spec/openapi.yaml` — API contract; regenerate clients after changes
+- `lib/db/src/schema/` — PostgreSQL models
+- `artifacts/api-server/src/lib/seed.ts` — idempotent development sample catalog. Run with `pnpm --filter @workspace/scripts exec tsx ../artifacts/api-server/src/lib/seed.ts`.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Checkout is deliberately simulated. Never collect card numbers or claim payments were processed until a real payment provider is integrated.
+- Never grant administrator privileges to the first registrant. Store administrators must be explicitly assigned `publicMetadata.role: "admin"` in Clerk; server-side authorization protects every administrative mutation.
+- Guest carts, wishlists and demo orders belong to an unguessable HTTP-only cookie session. Signing in merges guest cart/wishlist into the Clerk customer account.
+- Product prices and availability are sample catalog data, not representations of an existing Kuwait company's inventory. Business contact information and policies need owner review before launch.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Product browsing/search/filtering, specifications and datasheets, comparison, wishlist, persistent cart, Kuwait checkout, customer accounts and protected inventory/order management. KWD prices use three decimal places.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Build the full frontend experience first, populated with realistic sample products; do not deliver only a static homepage.
+- Original branding rather than copying RTC Electronics Kuwait.
+- English and Arabic with RTL; Kuwait governorates and delivery fields.
+- Requested blue/yellow palette: #0B3D91, #146CFF, #FFB703, background #F7F9FC.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Use existing artifact-owned workflows; do not create duplicate Vite/API workflows.
+- Development seeding is explicit, not a production startup migration. Publish manages production schema changes.
+- Clerk auth uses the canonical host-resolved publishable key and unconditional proxy URL to work in both development and production.
 
 ## Pointers
 
