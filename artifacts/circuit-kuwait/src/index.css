@@ -444,7 +444,7 @@ h1,h2,h3,h4,.font-display{font-family:var(--app-font-display);letter-spacing:-0.
 [dir='rtl'] h1,[dir='rtl'] h2,[dir='rtl'] h3,[dir='rtl'] h4,[dir='rtl'] .font-display{font-family:'Cairo',sans-serif;letter-spacing:0}
 .circuit-bg{background-image:linear-gradient(hsl(218 100% 54% / .06) 1px,transparent 1px),linear-gradient(90deg,hsl(218 100% 54% / .06) 1px,transparent 1px);background-size:32px 32px}
 .hero-grad{background:radial-gradient(900px 400px at 85% 0%,hsl(218 100% 54% / .5),transparent 60%),linear-gradient(135deg,#0B3D91 0%,#0a2f70 100%)}
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1),box-shadow .2s ease}
 .reveal.in{opacity:1;transform:none}
 .skel{background:linear-gradient(90deg,hsl(216 40% 94%),hsl(216 40% 98%),hsl(216 40% 94%));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -453,6 +453,6 @@ h1,h2,h3,h4,.font-display{font-family:var(--app-font-display);letter-spacing:-0.
 .pop{animation:pop .35s ease}
 @keyframes floaty{50%{transform:translateY(-8px)}}
 .floaty{animation:floaty 5s ease-in-out infinite}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.floaty,.pop{animation:none}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none!important}.floaty,.pop{animation:none}html{scroll-behavior:auto!important}}
 .no-scrollbar::-webkit-scrollbar{display:none}
 html{scroll-behavior:smooth}

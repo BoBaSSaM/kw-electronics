@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Link } from 'wouter';
 import { Star, PackageSearch, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useLang } from '@/lib/i18n';
 import { kwd, discountPct } from '@/lib/format';
 import type { Product } from '@workspace/api-client-react';
+import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -19,13 +20,7 @@ export function Logo({ light = false }: { light?: boolean }) {
 }
 
 export function Reveal({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [seen, setSeen] = useState(false);
-  useEffect(() => {
-    const el = ref.current; if (!el) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.08 });
-    io.observe(el); return () => io.disconnect();
-  }, []);
+  const { ref, seen } = useScrollReveal<HTMLDivElement>();
   return <div ref={ref} style={{ transitionDelay: `${delay}ms` }} className={cn('reveal', seen && 'in', className)}>{children}</div>;
 }
 

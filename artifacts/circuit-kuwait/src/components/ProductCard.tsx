@@ -6,14 +6,16 @@ import { useLang } from '@/lib/i18n';
 import { discountPct, imgOf } from '@/lib/format';
 import { Price, Stars, Stock } from '@/components/bits';
 import { cn } from '@/lib/utils';
+import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 
 export function ProductCard({ p, list = false }: { p: Product; list?: boolean }) {
+  const { ref, seen } = useScrollReveal<HTMLElement>();
   const { addToCart, toggleWish, inWishlist, toggleCompare, inCompare, setQuick } = useShop();
   const { tr, pn } = useLang();
   const d = discountPct(p);
   const wished = inWishlist(p.id);
   return (
-    <article className={cn('group relative flex overflow-hidden rounded-2xl border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10', list ? 'flex-row' : 'flex-col')} data-testid={`card-product-${p.id}`}>
+     <article ref={ref} className={cn('reveal group relative flex overflow-hidden rounded-2xl border bg-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/10', seen && 'in', list ? 'flex-row' : 'flex-col')} data-testid={`card-product-${p.id}`}>
       <div className={cn('relative shrink-0 bg-muted/60', list ? 'w-36 sm:w-52' : 'aspect-square')}>
         <Link href={`/products/${p.slug}`} className="block size-full">
           <img src={imgOf(p)} alt={pn(p)} loading="lazy" className="size-full object-cover transition-transform duration-300 group-hover:scale-105" />
