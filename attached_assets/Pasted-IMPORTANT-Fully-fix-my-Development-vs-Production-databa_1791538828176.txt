@@ -1,0 +1,209 @@
+IMPORTANT: Fully fix my Development vs Production database problem. Do not only explain the issue — inspect the project, make the necessary changes, migrate the data, test everything, and verify that the published website displays all data.
+My problem:
+- The website works correctly in Replit Development/localhost.
+- All products, categories, subcategories, images, prices, stock, descriptions, and other website data appear in Development.
+- After publishing the website, the real public URL shows no products/data.
+- My Replit project has both a Development Database and a Production Database.
+My goal is:
+Make the Production Database contain the same schema and data as the Development Database, and make the published website correctly read from Production.
+STEP 1 — Inspect both databases
+Inspect the Development Database and Production Database.
+Find every table in both databases.
+Examples may include:
+- products
+- categories
+- subcategories
+- brands
+- product_images
+- inventory
+- variants
+- specifications
+- users
+- settings
+- banners
+- homepage_sections
+- featured_products
+- any other tables used by the website
+Do not assume table names. Discover the actual schema.
+For every table, compare:
+- table name
+- columns
+- data types
+- primary keys
+- foreign keys
+- indexes
+- constraints
+- sequences / auto-increment IDs
+- row counts
+Create a clear comparison of Development vs Production.
+STEP 2 — Backup Production first
+Before deleting, replacing, truncating, or modifying Production data, create a backup or safe restore point.
+Do NOT modify the Development Database.
+Development is the source of truth.
+STEP 3 — Make Production schema match Development
+Make sure Production contains all tables, columns, relationships, constraints, foreign keys, indexes, and sequences required by Development.
+Run any missing migrations.
+Do not create duplicate tables.
+Do not create tables with slightly different names.
+Production schema should match Development.
+STEP 4 — Copy ALL Development data into Production
+Copy all existing Development records to Production while preserving:
+- IDs
+- product IDs
+- category IDs
+- relationships
+- foreign keys
+- product-category relationships
+- product images
+- image URLs
+- prices
+- stock
+- descriptions
+- specifications
+- variants
+- categories
+- subcategories
+- brands
+- homepage data
+- website settings
+- all other required records
+I want the website catalog in Production to be identical to Development.
+If the Production Database does NOT contain important real customer/order data, it is acceptable to clear the existing Production tables and recreate/restore them from Development so both databases match.
+Do this carefully in the correct foreign-key order.
+STEP 5 — Fix database sequences
+After copying records, update all PostgreSQL sequences / auto-increment counters.
+For example, if the highest product ID is 150, the next inserted product must not try to use an existing ID.
+Verify sequences for every table that uses generated IDs.
+STEP 6 — Check the Production database connection
+Inspect the backend code and environment configuration.
+Make sure:
+Development:
+Development application → Development Database
+Published website:
+Production application → Production Database
+Verify the production DATABASE_URL or equivalent database environment variable.
+Do NOT hard-code database credentials.
+Do NOT expose database credentials to frontend/browser code.
+Use Replit environment variables/secrets correctly.
+STEP 7 — Search the entire project for localhost
+Search ALL project files for:
+- localhost
+- 127.0.0.1
+- local API URLs
+- development-only URLs
+- hard-coded backend URLs
+- hard-coded database connections
+The published frontend must NOT try to request data from something like:
+http://localhost:3000/api/products
+or
+http://127.0.0.1/...
+Fix this so production uses the correct deployed backend/API.
+Prefer relative API paths when frontend and backend are hosted together, for example:
+/api/products
+instead of:
+http://localhost:5000/api/products
+STEP 8 — Verify the API directly
+Find the actual API endpoints responsible for loading:
+- products
+- categories
+- subcategories
+- brands
+- homepage products
+- featured products
+- any catalog data
+Test these endpoints in the Production environment.
+For example, endpoints may look similar to:
+/api/products
+/api/categories
+/api/products/featured
+but use the actual routes from this project.
+Verify that Production API responses contain real records.
+If the database contains products but the API returns an empty array such as:
+[]
+diagnose and fix the query.
+STEP 9 — Check filters
+Check whether Production is accidentally filtering products because of fields such as:
+- active
+- published
+- visible
+- enabled
+- deleted
+- archived
+- stock
+- category
+For example, check for queries similar to:
+WHERE active = true
+or
+WHERE published = true
+Make sure copied products have the values required to appear on the public website.
+STEP 10 — Check frontend data handling
+Inspect the frontend code that fetches products and categories.
+Verify:
+Published Browser
+→ API
+→ Backend
+→ Production Database
+→ Products
+→ API response
+→ Frontend
+→ Product cards visible
+Fix:
+- failed fetch requests
+- incorrect endpoint URLs
+- CORS problems
+- environment variable problems
+- JSON parsing problems
+- incorrect property names
+- production-only errors
+STEP 11 — Verify product images
+Make sure product images also work on the published website.
+If Development uses local filesystem images that are unavailable after deployment, migrate or correctly serve those assets.
+Verify every product's image URL/path works in Production.
+Do not consider the problem solved if product text loads but images are broken.
+STEP 12 — Compare row counts
+After migration, give me a table similar to:
+Table | Development rows | Production rows | Status
+For example:
+products | 50 | 50 | MATCH
+categories | 8 | 8 | MATCH
+brands | 12 | 12 | MATCH
+Check ALL relevant tables.
+The goal is for Development and Production to have matching data.
+STEP 13 — Production test
+Run the application using the Production configuration.
+Confirm that:
+- /api/products or the actual product endpoint returns products
+- categories return data
+- product details work
+- product images work
+- homepage product sections work
+- category filtering works
+- search works if implemented
+- there are no database connection errors
+- there are no important server errors
+STEP 14 — Republish if required
+If code or production configuration was changed, redeploy/republish the application using the correct Production configuration.
+Then verify the PUBLIC deployed URL, not only localhost.
+Do not tell me that it should work. Actually verify it.
+Final report
+When finished, give me a simple report containing:
+1. Development Database name/connection used
+2. Production Database name/connection used
+3. All database tables found
+4. Development row count for each table
+5. Production row count for each table
+6. Tables/data that were copied
+7. Migrations that were applied
+8. Whether sequences were corrected
+9. Product API endpoint
+10. Number of products returned by the Production API
+11. Number of categories returned by the Production API
+12. Whether any localhost URLs were found and fixed
+13. Whether Production is connected to the Production Database
+14. Whether product images work
+15. Whether products are visible on the real published URL
+16. Any remaining errors
+Do not stop after modifying the database.
+The task is only complete when this full path works:
+Production Database → Backend → API → Published Website → Products visible
+If something prevents you from completing a step, show me the exact error message and exact file/configuration causing it, rather than saying the migration was successful.
